@@ -1,9 +1,9 @@
 import * as admin from "firebase-admin"
-import { UserModel } from "../model/user.model"
+import { AdminModel } from "../model/admin.model"
 
 /**
  *
- * @param {UserModel} user
+ * @param {AdminModel} user
  */
 export const create_user = user => admin.auth().createUser(user)
 
