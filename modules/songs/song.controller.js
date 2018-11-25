@@ -15,7 +15,6 @@ export const addNewsongBand = async (req, res, next) => {
       fileName,
       pathSongImag
     )
-    console.log(songBandModel)
 
     const updateDataOnDb = await songP.addNewSongBand(
       req.mysql_db,

@@ -3,7 +3,7 @@ import uploads from "../../lib/multer"
 
 export const songRoute = router => {
   // router.get("/user/songlistuser")
-  // router.get("/admin/songlistadmin")
+  router.get("/admin/songlistadmin", songControl.getSongList)
   router.post(
     "/admin/add/song",
     uploads.array("image", 12),

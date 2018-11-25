@@ -18,7 +18,7 @@ export const addNewSongBand = (mysqlCommand, songBand) =>
     mysqlCommand
       .promise()
       .query(sql_add_song, arraySong)
-      .then(data => res(new MessageModel(msgSuccess, 200, data)))
+      .then(data => res(new MessageModel(msgSuccess, 200)))
       .catch(err => rej(errHandler(err)))
   })
 
@@ -28,29 +28,26 @@ export const getOneSongBand = (id_song, mysqlCommand) =>
       .promise()
       .query("Select * from songBand where id = ?", [id_song])
       .then(([rows]) => {
-        switch (rows.length) {
-          case true:
-            res(new MessageModel("I find the song band success.", 200, rows[0]))
-
-          case false:
-            res(new MessageModel("The Song Band is not exists.", 200))
+        if (rows.length) {
+          return res(new MessageModel(msgSuccess, 200, rows))
+        } else {
+          return res(new MessageModel("The song is empty data.", 200))
         }
       })
       .catch(err => rej(errHandler(err)))
   })
 export const getListSong = (start_list, end_list, mysqlCommand) =>
   new Promise((res, rej) => {
-    const getListSql = `select * from songBand order by create_at desc limit ? , ?`
+    const getListSql = `select * from songBand order by create_at desc limit ${start_list},${end_list}`
     const msgSuccess = "I find list of the song band success."
     mysqlCommand
       .promise()
-      .query(getListSql, [start_list, end_list])
+      .query(getListSql)
       .then(([rows]) => {
-        switch (rows.length) {
-          case true:
-            res(new MessageModel(msgSuccess, 200, rows))
-          case false:
-            res(new MessageModel("The song is empty data.", 200))
+        if (rows.length) {
+          return res(new MessageModel(msgSuccess, 200, rows))
+        } else {
+          return res(new MessageModel("The song is empty data.", 200))
         }
       })
       .catch(err => rej(errHandler(err)))
