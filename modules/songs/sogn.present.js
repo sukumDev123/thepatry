@@ -9,31 +9,19 @@ const errHandler = err => new MessageModel(err, 500)
  * @param {*} mysqlCommand
  * @param {SongBandModel} songBand
  */
-export const addNewSongBand = (mysqlCommand, songBand, img_files) =>
+export const addNewSongBand = (mysqlCommand, songBand) =>
   new Promise((res, rej) => {
+    const { name_band, detail_band, price_band, img_src, path_img } = songBand
+    const arraySong = [name_band, detail_band, price_band, img_src, path_img]
+    const sql_add_song = `INSERT INTO songBand(name_band,detail_band,price_band,img_src,path_img) VALUES (?,?,?,?,?)`
+    const msgSuccess = `Upload New Song Band Conllection Success.`
     mysqlCommand
       .promise()
-      .query(
-        "INSERT INTO songBand(name_band,detail_band,price_band,img_src) VALUES(?,?,?,?)"[
-          (songBand.name_band,
-          songBand.detail_band,
-          songBand.price_band,
-          songBand.img_src)
-        ]
-      )
-      .then(data => res(addPhotoOnServer(data, songBand.img_src, img_files)))
+      .query(sql_add_song, arraySong)
+      .then(data => res(new MessageModel(msgSuccess, 200, data)))
       .catch(err => rej(errHandler(err)))
   })
-const addPhotoOnServer = (data, name_img, img_files, cb) => {
-  console.log(data)
-  fs.writeFile(
-    path.resolve(`./public/songband/${name_img}`, img_files, err =>
-      err
-        ? cb({ message: err, status: false })
-        : cb({ message: "Image was writen.", status: true })
-    )
-  )
-}
+
 export const getOneSongBand = (id_song, mysqlCommand) =>
   new Promise((res, rej) => {
     mysqlCommand
@@ -52,23 +40,15 @@ export const getOneSongBand = (id_song, mysqlCommand) =>
   })
 export const getListSong = (start_list, end_list, mysqlCommand) =>
   new Promise((res, rej) => {
+    const getListSql = `select * from songBand order by create_at desc limit ? , ?`
+    const msgSuccess = "I find list of the song band success."
     mysqlCommand
       .promise()
-      .query(
-        "select * from songBand order by create_at desc limit ? , ?"[
-          (start_list, end_list)
-        ]
-      )
+      .query(getListSql, [start_list, end_list])
       .then(([rows]) => {
         switch (rows.length) {
           case true:
-            res(
-              new MessageModel(
-                "I find list of the song band success.",
-                200,
-                rows
-              )
-            )
+            res(new MessageModel(msgSuccess, 200, rows))
           case false:
             res(new MessageModel("The song is empty data.", 200))
         }
@@ -84,26 +64,24 @@ export const getListSong = (start_list, end_list, mysqlCommand) =>
  */
 export const updateSongBand = (id_song, mysqlCommand, songBandDataEdit) =>
   new Promise((res, rej) => {
+    const update_sql_song = `UPDATE songBand SET name_bane = ? , detail_bane = ? , price_band = ? WHERE id = ?`
+    const { name_band, detail_band, price_band } = songBandDataEdit
+    const array_song = [name_band, detail_band, price_band, id_song]
     mysqlCommand
       .promise()
-      .query(
-        "UPDATE songBand SET name_bane = ? , detail_bane = ? , price_band = ? WHERE id = ?",
-        [
-          songBandDataEdit.name_band,
-          songBandDataEdit.detail_band,
-          songBandDataEdit.price_band,
-          id_song
-        ]
-      )
+      .query(update_sql_song, array_song)
       .then(data => res(data))
-      .catch(err => new MessageModel(err, 500))
+      .catch(err => rej(new MessageModel(err, 500)))
   })
 
 export const deleteSongBand = async (id_song, mysqlCommand) =>
   new Promise((res, rej) => {
-    mysqlCommand
-      .promise()
-      .query("DELETE FROM songBand WHERE id = ?", [id_song])
-      .then(suc => res(suc))
-      .catch(err => new MessageModel(err, 500))
+    getOneSongBand(id_song, mysqlCommand).then(suc => {
+      fs.unlinkSync(path.resolve(`./public/${suc.img_src}`))
+      mysqlCommand
+        .promise()
+        .query("DELETE FROM songBand WHERE id = ?", [id_song])
+        .then(suc => res(suc))
+        .catch(err => rej(new MessageModel(err, 500)))
+    })
   })

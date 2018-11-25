@@ -1,7 +1,32 @@
 import { SongBandModel } from "./song.model"
 import * as songP from "./sogn.present"
 import { MessageModel } from "../message.model"
-export const addNewsongBand = async (req, res, next) => {}
+export const addNewsongBand = async (req, res, next) => {
+  try {
+    const { song } = req.body
+    const songToJson = JSON.parse(song)
+    const thisImg = req.files[0]
+    const pathSongImag = thisImg.path
+    const fileName = thisImg.filename
+    const songBandModel = new SongBandModel(
+      songToJson.name_band,
+      songToJson.detail_band,
+      songToJson.price_band,
+      fileName,
+      pathSongImag
+    )
+    console.log(songBandModel)
+
+    const updateDataOnDb = await songP.addNewSongBand(
+      req.mysql_db,
+      songBandModel
+    )
+    res.json(updateDataOnDb)
+  } catch (error) {
+    console.log(error)
+    next(new MessageModel(JSON.stringify(error), 500))
+  }
+}
 export const updateSongBand = async (req, res, next) => {
   try {
     if (req.song.id) {
