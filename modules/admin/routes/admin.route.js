@@ -1,5 +1,6 @@
 import * as cont from "../controllers/admin.controller"
-const certFirebase = require("./partydesign.json")
+import * as admin from "firebase-admin"
+const certFirebase = require("../../../lib/partydesign.json")
 let conf = false
 const adminFirebaseConnect = (req, res, next) => {
   if (!conf) {
@@ -12,15 +13,7 @@ const adminFirebaseConnect = (req, res, next) => {
   next()
 }
 export const adminRouter = router => {
-  router.post(
-    "/admin/createNewUser",
-    adminFirebaseConnect,
-    cont.create_new_user
-  )
-  router.post(
-    "/admin/loginWithEmail",
-    adminFirebaseConnect,
-    cont.loginWithEmail
-  )
+  router.post("/user/createNewUser", adminFirebaseConnect, cont.create_new_user)
+  router.post("/admin/findWithEmail", adminFirebaseConnect, cont.loginWithEmail)
   return router
 }
