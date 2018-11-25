@@ -1,6 +1,6 @@
 import * as cont from "../controllers/admin.controller"
 import * as admin from "firebase-admin"
-const certFirebase = require("../../../lib/partydesign.json")
+const certFirebase = require("../../../lib/json/partydesign.json")
 let conf = false
 const adminFirebaseConnect = (req, res, next) => {
   if (!conf) {

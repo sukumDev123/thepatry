@@ -20,7 +20,8 @@
     "firebase": "^5.5.9",
     "firebase-admin": "^6.2.0",
     "firebase-functions": "^2.1.0",
-    "morgan": "^1.9.1"
+    "morgan": "^1.9.1",
+    "mysql2": "^1.6.4"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

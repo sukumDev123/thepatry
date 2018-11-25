@@ -11,3 +11,10 @@ export const login = async (req, res, next) => {
     }
   }
 }
+export const register = async (req, res, next) => {
+  try {
+    const { email, password, displayName } = req.body
+  } catch (error) {
+    next({ message: JSON.stringify(error), status: 500 })
+  }
+}

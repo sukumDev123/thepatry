@@ -1,5 +1,4 @@
 build
 node_modules
-lib/partydesign.json
+lib/json
 .DS_Store
-partyuser.json
