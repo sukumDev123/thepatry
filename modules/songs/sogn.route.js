@@ -9,11 +9,11 @@ export const songRoute = router => {
     uploads.array("image", 12),
     songControl.addNewsongBand
   )
-  // router
-  //   .route("/admin/song/:id_song")
-  //   .put()
-  //   .delete()
-  // router.param("id_song")
+  router
+    .route("/admin/song/:id_song")
+    .put(songControl.updateSongBand)
+    .delete(songControl.deleteSongBand)
+  router.param("id_song" , songControl.idSongParam)
 
   return router
 }

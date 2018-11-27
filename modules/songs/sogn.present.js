@@ -29,7 +29,8 @@ export const getOneSongBand = (id_song, mysqlCommand) =>
       .query("Select * from songBand where id = ?", [id_song])
       .then(([rows]) => {
         if (rows.length) {
-          return res(new MessageModel(msgSuccess, 200, rows))
+          const msgSuccess = "Delete data success."
+          return res(new MessageModel(msgSuccess, 200, rows[0]))
         } else {
           return res(new MessageModel("The song is empty data.", 200))
         }
@@ -71,14 +72,14 @@ export const updateSongBand = (id_song, mysqlCommand, songBandDataEdit) =>
       .catch(err => rej(new MessageModel(err, 500)))
   })
 
-export const deleteSongBand = async (id_song, mysqlCommand) =>
+export const deleteSongBand = async (id_song, img_src, mysqlCommand) =>
   new Promise((res, rej) => {
-    getOneSongBand(id_song, mysqlCommand).then(suc => {
-      fs.unlinkSync(path.resolve(`./public/${suc.img_src}`))
-      mysqlCommand
-        .promise()
-        .query("DELETE FROM songBand WHERE id = ?", [id_song])
-        .then(suc => res(suc))
-        .catch(err => rej(new MessageModel(err, 500)))
-    })
+    const mesSuccessD = "The Song Band is deleted success."
+    const sqlDelete = "DELETE FROM songBand WHERE id = ?"
+    fs.unlinkSync(path.resolve(`./public/${img_src}`))
+    mysqlCommand
+      .promise()
+      .query(sqlDelete, [id_song])
+      .then(suc => res(new MessageModel(mesSuccessD, 200)))
+      .catch(err => rej(new MessageModel(err, 500)))
   })
