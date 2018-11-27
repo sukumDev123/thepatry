@@ -34,7 +34,7 @@ export class LocationPresent {
         img_location,
         price_location
       } = location
-      const sqlInsert = `INSERT INTO location(name_location,detail_location , img_location,price_location) VALUES (?,?,?,?)`
+      const sqlInsert = `INSERT INTO tb_location(name_location,detail_location , img_location,price_location) VALUES (?,?,?,?)`
       const dataToInsert = [
         name_location,
         detail_location,
@@ -44,14 +44,14 @@ export class LocationPresent {
       this.mysql
         .query(sqlInsert, dataToInsert)
         .then(data =>
-          res(new MessageModel("Insert data to location db success", 200))
+          res(new MessageModel("Insert data to tb_location db success", 200))
         )
-        .catch(err => new MessageModel(JSON.stringify(err), 500))
+        .catch(err => rej(new MessageModel(JSON.stringify(err), 500)))
     })
   }
   updateLocation(location, id_location) {
     return new Promise((res, rej) => {
-      const updateSql = `UPDATE location SET name_location = ? , detail_location =? , price_location = ? where id= ?`
+      const updateSql = `UPDATE tb_location SET name_location = ? , detail_location =? , price_location = ? where id= ?`
       const { name_location, detail_location, price_location } = location
       const updateLocationData = [
         name_location,
@@ -67,17 +67,17 @@ export class LocationPresent {
   }
   deleteLocation(id_location) {
     return new Promise((res, rej) => {
-      const deleteSql = `DELETE FROM location WHERE id = ?`
+      const deleteSql = `DELETE FROM tb_location WHERE id = ?`
       const id_toDeleteOnDb = [id_location]
       this.mysql
         .query(deleteSql, id_toDeleteOnDb)
-        .then(data => res(new MessageModel("Location is deleted.")))
+        .then(data => res(new MessageModel("Location is deleted.", 200)))
         .catch(err => rej(new MessageModel(JSON.stringify(err), 500)))
     })
   }
   getOneLocation(id_location) {
     return new Promise((res, rej) => {
-      const getOneLocation = `SELECT * FROM lcation from id = ?`
+      const getOneLocation = `SELECT * FROM tb_location WHERE id = ?`
       const id_loca_arr = [id_location]
       this.mysql
         .query(getOneLocation, id_loca_arr)
