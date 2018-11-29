@@ -1,5 +1,6 @@
 import { ThemePresent } from "./theme.presnet"
 import { ThemeModel } from "./theme.model"
+import { MessageModel } from "../message.model"
 
 export const addNewFoodController = async (req, res, next) => {
   try {
@@ -25,15 +26,27 @@ export const addNewFoodController = async (req, res, next) => {
 export const deleteTheme = async (req, res, next) => {
   try {
     const id = req.theme.id
+    const img_theme = req.theme.img_theme
     const deleteThemePlace = await new ThemePresent(
       req.mysql_db
-    ).deleteThemePresent(id)
+    ).deleteThemePresent(id, img_theme)
+
     res.json(deleteThemePlace)
   } catch (error) {
     next(new MessageModel(JSON.stringify(error), 500))
   }
 }
-
+export const getListAllTheme = async (req, res, next) => {
+  try {
+    const { start_theme, end_theme } = req.query
+    const getListTheme = await new ThemePresent(
+      req.mysql_db
+    ).getListOfThemePresent(start_theme, end_theme)
+    res.json(getListTheme)
+  } catch (error) {
+    next(new MessageModel(JSON.stringify(error), 500))
+  }
+}
 export const getOneOfTheme = (req, res, next) => {
   res.json(req.totalTheme)
 }

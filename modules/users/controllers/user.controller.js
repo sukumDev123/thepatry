@@ -64,3 +64,4 @@ export const loginNormal = async (req, res, next) => {
     next({ message: JSON.stringify(error), status: 500 })
   }
 }
+// export const createNewUser = async (req, res, next) => {}

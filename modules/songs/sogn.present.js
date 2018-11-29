@@ -40,13 +40,22 @@ export const getOneSongBand = (id_song, mysqlCommand) =>
 export const getListSong = (start_list, end_list, mysqlCommand) =>
   new Promise((res, rej) => {
     const getListSql = `select * from songBand order by create_at desc limit ${start_list},${end_list}`
+    const getTotal = `select count(*) as size from songBand`
     const msgSuccess = "I find list of the song band success."
     mysqlCommand
       .promise()
       .query(getListSql)
       .then(([rows]) => {
-        if (rows.length) {
-          return res(new MessageModel(msgSuccess, 200, rows))
+        const list = rows
+        if (list.length) {
+          mysqlCommand
+            .promise()
+            .query(getTotal)
+            .then(([rows]) => {
+              const { size } = rows[0]
+              return res(new MessageModel(msgSuccess, 200, list, size))
+            })
+            .catch(e => console.log(e))
         } else {
           return res(new MessageModel("The song is empty data.", 200))
         }

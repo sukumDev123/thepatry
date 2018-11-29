@@ -1,7 +1,8 @@
 import { LocationModel } from "../locations/location.model"
 import { FoodModel } from "./food.model"
 import { MessageModel } from "../message.model"
-
+import fs from "fs"
+import path from "path"
 export class FoodPresnet {
   constructor(mysql) {
     this.mysql = mysql.promise()
@@ -25,10 +26,12 @@ export class FoodPresnet {
         .catch(err => rej(new MessageModel(JSON.stringify(err), 500)))
     })
   }
-  deleteFoodPresent(id_food) {
+  deleteFoodPresent(id_food, img_src) {
     return new Promise((res, rej) => {
       const deleteSql = "DELETE FROM tb_food WHERE id = ?"
       const arrayId = [id_food]
+      fs.unlinkSync(path.resolve(`./public/${img_src}`))
+
       this.mysql
         .query(deleteSql, arrayId)
         .then(succ => res(new MessageModel("Food place is deleted.", 200)))
@@ -54,11 +57,18 @@ export class FoodPresnet {
   getListOfFoodPresent(start, end) {
     return new Promise((res, rej) => {
       const sqlSelect = `SELECT  * FROM tb_food order by create_at desc limit ${start},${end}`
+      const getTotal = `select count(*)  as size from tb_location`
+
       this.mysql
         .query(sqlSelect)
         .then(([rows]) => {
-          if (rows.length) {
-            res(new MessageModel("List of Food are shown.", 200, rows))
+          const lists = rows
+          if (lists.length) {
+            this.mysql.query(getTotal).then(([rows]) => {
+              const { size } = rows[0]
+
+              res(new MessageModel("List of Food are shown.", 200, lists, size))
+            })
           } else {
             res(new MessageModel("Food place is empty.", 200))
           }

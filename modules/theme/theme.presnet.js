@@ -1,15 +1,26 @@
+import { MessageModel } from "../message.model"
+import fs from "fs"
+import path from "path"
 export class ThemePresent {
   constructor(mysql) {
     this.mysql = mysql.promise()
   }
-  getListOfThemePresent(start, end) {
+  getListOfThemePresent(start = 0, end = 10) {
     return new Promise((res, rej) => {
-      const sqlSelect = `SELECT  * FROM tb_theme order by create_at desc limit ${start},${end}`
+      const sqlSelect = `select  * from tb_theme order by create_at  limit ${start},${end}`
+      const getTotal = `select count(*)  as size from tb_theme`
+
       this.mysql
         .query(sqlSelect)
         .then(([rows]) => {
+          const lists = rows
           if (rows.length) {
-            res(new MessageModel("List of Theme are shown.", 200, rows))
+            this.mysql.query(getTotal).then(([rows]) => {
+              const { size } = rows[0]
+              res(
+                new MessageModel("List of Theme are shown.", 200, lists, size)
+              )
+            })
           } else {
             res(new MessageModel("Theme place is empty.", 200))
           }
@@ -33,10 +44,12 @@ export class ThemePresent {
         .catch(err => rej(new MessageModel(JSON.stringify(err), 500)))
     })
   }
-  deleteThemePresent(id_theme) {
+  deleteThemePresent(id_theme, img_src) {
     return new Promise((res, rej) => {
       const deleteSql = "DELETE FROM tb_theme WHERE id = ?"
       const arrayId = [id_theme]
+      fs.unlinkSync(path.resolve(`./public/${img_src}`))
+
       this.mysql
         .query(deleteSql, arrayId)
         .then(succ => res(new MessageModel("Theme place is deleted.", 200)))

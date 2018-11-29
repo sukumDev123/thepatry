@@ -40,10 +40,11 @@ export const getOneOfFood = (req, res) => {
 }
 export const deleteFood = async (req, res, next) => {
   try {
-    const id = req.food.id
+    const { id, img_theme } = req.food
+
     const deleteFoodPlace = await new FoodPresnet(
       req.mysql_db
-    ).deleteFoodPresent(id)
+    ).deleteFoodPresent(id, img_theme)
     res.json(deleteFoodPlace)
   } catch (error) {
     next(new MessageModel(JSON.stringify(error), 500))

@@ -59,8 +59,10 @@ export const updateLocation = async (req, res, next) => {
 export const deleteLocation = async (req, res, next) => {
   try {
     const id_location = req.location.id
+    const img_location = req.location.img_location
     const delete_toDb = await new LocationPresent(req.mysql_db).deleteLocation(
-      id_location
+      id_location,
+      img_location
     )
     console.log("delete_toDb", delete_toDb)
     res.json(delete_toDb).end()

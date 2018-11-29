@@ -1,6 +1,7 @@
 import { MessageModel } from "../message.model"
 import { LocationModel } from "./location.model"
-
+import fs from "fs"
+import path from "path"
 export class LocationPresent {
   constructor(mysql) {
     this.mysql = mysql.promise()
@@ -9,11 +10,18 @@ export class LocationPresent {
     return new Promise((res, rej) => {
       if (this.mysql) {
         const sqlSelect = `SELECT * FROM tb_location order by create_at limit ${start},${end}`
+        const getTotal = `select count(*) as size from tb_location`
+
         this.mysql
           .query(sqlSelect)
           .then(([rows]) => {
-            if (rows.length) {
-              res(new MessageModel("Find Location success.", 200, rows))
+            const list = rows
+            if (list.length) {
+              this.mysql.query(getTotal).then(([rows]) => {
+                console.log(rows)
+                const { size } = rows[0]
+                res(new MessageModel("Find Location success.", 200, list, size))
+              })
             } else {
               res(new MessageModel("Location is empty.", 200, []))
             }
@@ -65,10 +73,12 @@ export class LocationPresent {
         .catch(err => rej(new MessageModel(JSON.stringify(err), 500)))
     })
   }
-  deleteLocation(id_location) {
+  deleteLocation(id_location, img_src) {
     return new Promise((res, rej) => {
       const deleteSql = `DELETE FROM tb_location WHERE id = ?`
       const id_toDeleteOnDb = [id_location]
+      fs.unlinkSync(path.resolve(`./public/${img_src}`))
+
       this.mysql
         .query(deleteSql, id_toDeleteOnDb)
         .then(data => res(new MessageModel("Location is deleted.", 200)))
