@@ -14,7 +14,7 @@ export class FoodPresnet {
    */
   addNewFoodPresent(food) {
     const { detail_food, name_food, img_food, price_food } = food
-    const arrayFood = [detail_food, name_food, img_food, price_food]
+    const arrayFood = [name_food, detail_food, img_food, price_food]
     const sqlInsert =
       "INSERT INTO tb_food(name_food , detail_food , img_food , price_food) VALUES (?,?,?,?)"
     return new Promise((res, rej) => {

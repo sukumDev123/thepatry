@@ -42,12 +42,13 @@ export const loginNormal = async (req, res, next) => {
     if (roles === "admin") {
       if (loginData.roles) {
         loginData.success = true
+        // console.log("loginData ", loginData)
         res.json(new MessageModel("Admin is logined.", 200, loginData)).end()
       } else {
         res
           .status(401)
           .json(
-            new MessageModel("You are not a admin.", 401, {
+            new MessageModel("You are not a user.", 401, {
               email: "",
               displayName: "",
               roles: "",

@@ -58,7 +58,7 @@ export class ThemePresent {
   }
   addNewThemePresent(theme) {
     const { detail_theme, name_theme, img_theme, price_theme } = theme
-    const arraytheme = [detail_theme, name_theme, img_theme, price_theme]
+    const arraytheme = [ name_theme , detail_theme, img_theme, price_theme]
     const sqlInsert =
       "INSERT INTO tb_theme(name_theme , detail_theme , img_theme , price_theme) VALUES (?,?,?,?)"
     return new Promise((res, rej) => {
