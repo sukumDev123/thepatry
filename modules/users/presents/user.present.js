@@ -38,10 +38,10 @@ export const login_normal = async (mysqlCommand, { email, password }) => {
   try {
     const mysql = mysqlCommand.promise()
     const [rows] = await mysql.query(
-      "select displayName , email , roles , password from users where  email = ?",
+      "select displayName , email , roles , password,id from users where  email = ?",
       [email]
     )
-    console.log(rows)
+    // console.log(rows)
     if (rows.length) {
       console.log(check_password(password, rows[0].password))
 
@@ -50,7 +50,8 @@ export const login_normal = async (mysqlCommand, { email, password }) => {
           const user_input = {
             displayName: rows[0].displayName,
             roles: rows[0].roles,
-            email: rows[0].email
+            email: rows[0].email,
+            id: rows[0].id
           }
           return user_input
         }
