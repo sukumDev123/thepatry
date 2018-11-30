@@ -57,7 +57,7 @@ export class FoodPresnet {
   getListOfFoodPresent(start, end) {
     return new Promise((res, rej) => {
       const sqlSelect = `SELECT  * FROM tb_food order by create_at desc limit ${start},${end}`
-      const getTotal = `select count(*)  as size from tb_location`
+      const getTotal = `select count(*)  as size from tb_food`
 
       this.mysql
         .query(sqlSelect)
