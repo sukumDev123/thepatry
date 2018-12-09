@@ -12,6 +12,7 @@ export const loginUser = (email, password) =>
  */
 export const register_user = async (user, mysqlCommand) => {
   try {
+    // console.log(user)
     const mysql = mysqlCommand.promise()
     const [rows] = await mysql.query(
       "select email from users where email = ?",
@@ -22,7 +23,7 @@ export const register_user = async (user, mysqlCommand) => {
       const salt = bcrypt.genSaltSync(10)
       const hash = bcrypt.hashSync(user.password, salt)
       await mysql.query(
-        "insert into users(email , password , roles , displayName) value(?,?,?)",
+        "insert into users(email , password , roles , displayName) value(?,?,? , ?)",
         [user.email, hash, user.role, user.displayName]
       )
       return new MessageModel("The user is add success.", 200)
