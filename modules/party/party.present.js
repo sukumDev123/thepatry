@@ -39,12 +39,21 @@ export class PartyPresent {
   getListParty(start, end, id_user) {
     return new Promise((res, rej) => {
       const sqlADd = `SELECT * FROM history_party hp
-      WHERE hp.id_user = ? `
+      WHERE hp.id_user = ?`
       this.mysql
         .query(sqlADd, [id_user])
         .then(([rows]) => {
           res(new MessageModel("List party success.", 200, rows))
         })
+        .catch(err => console.log(err))
+    })
+  }
+  getAllListParty() {
+    return new Promise((res, rej) => {
+      const sqlS = `SELECT * FROM history_party `
+      this.mysql
+        .query(sqlS)
+        .then(([rows]) => res(new MessageModel("List all", 200, rows)))
         .catch(err => console.log(err))
     })
   }

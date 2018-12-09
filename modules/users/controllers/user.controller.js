@@ -19,9 +19,10 @@ export const login = async (req, res, next) => {
 }
 export const register = async (req, res, next) => {
   try {
-    const { email, password, displayName } = req.body
+    const { email, password, displayname } = req.body
+    console.log(req.body)
     const register = await register_user(
-      new UserModel(email, password, displayName, false, "user"),
+      new UserModel(email, password, displayname, false, "user"),
       req.mysql_db
     )
     console.log(register)
@@ -39,24 +40,8 @@ export const loginNormal = async (req, res, next) => {
       email: email,
       password: password
     })
-    if (roles === "admin") {
-      if (loginData.roles) {
-        loginData.success = true
-        // console.log("loginData ", loginData)
-        res.json(new MessageModel("Admin is logined.", 200, loginData)).end()
-      } else {
-        res
-          .status(401)
-          .json(
-            new MessageModel("You are not a user.", 401, {
-              email: "",
-              displayName: "",
-              roles: "",
-              success: false
-            })
-          )
-          .end()
-      }
+    if (roles) {
+      res.json(new MessageModel("Admin is logined.", 200, loginData)).end()
     } else {
       res.json(new MessageModel("Get auth.", 200, loginData))
     }

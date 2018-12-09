@@ -42,3 +42,11 @@ export const getPartyList = (req, res, next) => {
     })
     .catch(err => next(err))
 }
+
+export const allList = (req, res, next) => {
+  const getAll = new PartyPresent(req.mysql_db)
+  getAll
+    .getAllListParty()
+    .then(data => res.json(data))
+    .catch(err => res.status(500).send(JSON.stringify(err)))
+}
